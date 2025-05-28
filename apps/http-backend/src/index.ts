@@ -8,7 +8,7 @@ import { signinSchema } from "@repo/common/types";
 import { prismaClient } from "@repo/db/client";
 
 const app = express();
-
+app.use(express.json())
 app.post("/signup", async (req, res) => {
 
     const parsedData = signinSchema.safeParse(req.body);
@@ -25,6 +25,7 @@ app.post("/signup", async (req, res) => {
                 email: parsedData.data?.username,
                 // TODO: Hash the pw
                 password: parsedData.data.password,
+                //@ts-ignore
                 name: parsedData.data.name
             }
         })
@@ -50,7 +51,7 @@ app.post("/signin", async (req, res) => {
     // TODO: Compare the hashed pws here
     const user = await prismaClient.user.findFirst({
         where: {
-            email: parsedData.data.username,
+            email: parsedData.data.username,  
             password: parsedData.data.password
         }
     })
@@ -84,7 +85,7 @@ app.post("/room", middleware, async (req, res) => {
 
     try {
         const room = await prismaClient.room.create({
-            data: {
+            data: {//@ts-ignore
                 slug: parsedData.data.name,
                 adminId: userId
             }
@@ -139,4 +140,7 @@ app.get("/room/:slug", async (req, res) => {
     })
 })
 
-app.listen(3001);
+app.listen(3001,()=>{
+  console.log("Server is running on port 3001")
+  
+})
