@@ -1,6 +1,6 @@
 import { WebSocketServer } from 'ws';
-import { JWT_SECRET } from './config'; 
 import jwt from 'jsonwebtoken';
+import { JWT_SECRET } from "@repo/backend-common/config" ;
 
 const wss = new WebSocketServer({ port: 8080 });
 
@@ -15,7 +15,14 @@ wss.on('connection', function connection(ws,request) {
   ws.on('error', console.error);
 
   const decodedToken = jwt.verify(token, JWT_SECRET);
-  if (!decodedToken) {
+
+  if(typeof decodedToken === 'string') {
+    console.error('Invalid token provided');
+    ws.close(1008, 'Invalid token'); // Close with policy violation code
+    return;
+  }
+
+  if (!decodedToken || !decodedToken.userId) {
     console.error('Invalid token provided');
     ws.close(1008, 'Invalid token'); // Close with policy violation code
     return;

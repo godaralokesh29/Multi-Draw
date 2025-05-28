@@ -1,7 +1,10 @@
 import express from 'express';
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET } from './config'; // Ensure you have a config file with your JWT secret
+import { JWT_SECRET } from "@repo/backend-common/config";
+import { userSchema } from '@repo/common/types';
+import { CreateRoomSchema } from '@repo/common/types';
+
 
 export function middleware(req: Request, res: Response, next: NextFunction) {
     const token=req.headers["authorization"] ?? "";
