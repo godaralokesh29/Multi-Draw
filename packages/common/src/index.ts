@@ -1,10 +1,9 @@
 import {z} from "zod";
 export const userSchema = z.object({
    
-    name: z.string(),
-
-    username: z.string(),
-    password: z.string(),
+  username: z.string(),
+  password: z.string(),
+  name: z.string(),
  })
 
 
@@ -13,4 +12,4 @@ export const userSchema = z.object({
   password: z.string(),})
 
   export const CreateRoomSchema = z.object({
-    roomName: z.string(),})
+    name: z.string() })

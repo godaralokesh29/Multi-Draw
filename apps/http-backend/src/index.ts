@@ -11,7 +11,7 @@ const app = express();
 app.use(express.json())
 app.post("/signup", async (req, res) => {
 
-    const parsedData = signinSchema.safeParse(req.body);
+    const parsedData = userSchema.safeParse(req.body);
     if (!parsedData.success) {
         console.log(parsedData.error);
         res.json({
@@ -21,7 +21,7 @@ app.post("/signup", async (req, res) => {
     }
     try {
         const user = await prismaClient.user.create({
-            data: {
+            data: { 
                 email: parsedData.data?.username,
                 // TODO: Hash the pw
                 password: parsedData.data.password,
@@ -33,9 +33,7 @@ app.post("/signup", async (req, res) => {
             userId: user.id
         })
     } catch(e) {
-        res.status(411).json({
-            message: "User already exists with this username"
-        })
+        res.json(e)
     }
 })
 
