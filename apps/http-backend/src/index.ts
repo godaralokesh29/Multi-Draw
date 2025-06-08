@@ -1,14 +1,14 @@
 import express from "express";
 import jwt from "jsonwebtoken";
-import {JWT_SECRET} from "@repo/backend-common/config"; // Ensure you have a config file with your JWT secret
-import { middleware } from "./middleware"; // Import your middleware for authentication
+import {JWT_SECRET} from "@repo/backend-common/config"; 
+import { middleware } from "./middleware";
 import { userSchema } from '@repo/common/types';
 import { CreateRoomSchema } from '@repo/common/types';
 import { signinSchema } from "@repo/common/types";
 import { prismaClient } from "@repo/db/client";
 
 const app = express();
-app.use(express.json())
+app.use(express.json())  
 app.post("/signup", async (req, res) => {
 
     const parsedData = userSchema.safeParse(req.body);
@@ -78,7 +78,7 @@ app.post("/room", middleware, async (req, res) => {
         })
         return;
     }
-    // @ts-ignore: TODO: Fix this
+    // @ts-ignore
     const userId = req.userId;
 
     try {
