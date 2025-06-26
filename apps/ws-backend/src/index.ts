@@ -5,7 +5,7 @@ import { prismaClient } from "@repo/db/client";
 
 const wss = new WebSocketServer({ port: 8080 });
 
-interface User {
+interface User{
   ws: WebSocket,
   rooms: string[],
   userId: string
