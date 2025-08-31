@@ -35,7 +35,7 @@ export function AuthPage({isSignin}: {isSignin: boolean}) {
                 )}
                 <button 
                     onClick={async (e)=>{
-                        const res=await axios.post("http://localhost:3000/signup",{
+                        const res=await axios.post("http://localhost:3000/{signup}",{
                             name,
                             username,   
                             password
