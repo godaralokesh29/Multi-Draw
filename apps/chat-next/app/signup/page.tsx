@@ -20,7 +20,7 @@ export default function SignupPage() {
         password
       });
 
-      router.push("/signin");
+      router.push("/room");
     } catch (e) {
       alert("Signup failed");
     }
