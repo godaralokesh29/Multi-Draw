@@ -2,6 +2,7 @@ import { Shapes } from "lucide-react";
 import { HtmlContext } from "next/dist/server/route-modules/pages/vendored/contexts/entrypoints";
 import axios from "axios";
 import { HTTP_BACKEND } from "@/config";
+import { initScriptLoader } from "next/script";
 
 type Shapes={
     type:"rect",
@@ -19,10 +20,23 @@ type Shapes={
 }
 
 
-export function initDraw(ctx:CanvasRenderingContext2D,canvas:HTMLCanvasElement,roomId:string){
+export async function initDraw(ctx:CanvasRenderingContext2D,canvas:HTMLCanvasElement,roomId:string,socket: WebSocket){
 
     let existingShapes:Shapes[]= await getExistingShapes(roomId);
+    socket.onmessage=(event)=>{
+
+        const message=JSON.parse(event.data);
+        if(message.type=="chat"){
+            const parsedShape=message.message
+            existingShapes.push(parsedShape);
+            clearCanvas(existingShapes,canvas,ctx);
+        }
+
+    }
+
     clearCanvas(existingShapes,canvas,ctx);
+
+
       let startX = 0;
       let startY = 0;
       let clicked = false;
@@ -38,13 +52,20 @@ export function initDraw(ctx:CanvasRenderingContext2D,canvas:HTMLCanvasElement,r
         clicked=false;
         const width = e.clientX - startX;
         const height = e.clientY - startY;
-        existingShapes.push({
+        const shape:Shapes={
             type:"rect",
             x:startX,
             y:startY,
             width,
             height
-        })
+        }
+        existingShapes.push(shape)
+
+        socket.send(JSON.stringify({
+            type:"chat",
+            message:JSON.stringify({shape}),
+            
+        }))
 
         
       })
@@ -81,7 +102,7 @@ async function getExistingShapes(roomId:string){
     const messages=res.data.messages
     const Shapes=messages.map((x:{message:string})=>{
         const parsedShape=JSON.parse(x.message)
-        return parsedShape
+        return parsedShape.shape
     })
     return Shapes;
 }
