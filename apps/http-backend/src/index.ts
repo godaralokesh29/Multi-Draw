@@ -20,7 +20,7 @@ app.post("/signup", async (req, res) => {
     const parsedData = userSchema.safeParse(req.body);
     if (!parsedData.success) {
         console.log(parsedData.error);
-        res.json({
+        res.status(400).json({
             message: "Incorrect inputs"
         })
         return;
@@ -39,41 +39,51 @@ app.post("/signup", async (req, res) => {
             userId: user.id
         })
     } catch(e) {
-        res.json(e)
+        console.error("Sign up error:", e);
+        res.status(500).json({
+            message: "Error creating user"
+        })
     }
 })
 
 app.post("/signin", async (req, res) => {
     const parsedData = signinSchema.safeParse(req.body);
     if (!parsedData.success) {
-        res.json({
+        res.status(400).json({
             message: "Incorrect inputs"
         })
         return;
     }
 
-    // TODO: Compare the hashed pws here
-    const user = await prismaClient.user.findFirst({
-        where: {
-            email: parsedData.data.username,  
-            password: parsedData.data.password
-        }
-    })
-
-    if (!user) {
-        res.status(403).json({
-            message: "Not authorized"
+    try {
+        // TODO: Compare the hashed pws here
+        const user = await prismaClient.user.findFirst({
+            where: {
+                email: parsedData.data.username,  
+                password: parsedData.data.password
+            }
         })
-        return;
+
+        if (!user) {
+            res.status(403).json({
+                message: "Not authorized"
+            })
+            return;
+        }
+
+        const token = jwt.sign({
+            userId: user?.id
+        }, JWT_SECRET);
+
+        res.json({
+            token
+        })
+    } catch (e) {
+        console.error("Sign in error:", e);
+        res.status(500).json({
+            message: "Internal server error"
+        })
     }
-
-    const token = jwt.sign({
-        userId: user?.id
-    }, JWT_SECRET);
-
-    res.json({
-        token
-    })
 })
 
 app.post("/room", middleware, async (req, res) => {
@@ -107,11 +117,43 @@ app.post("/room", middleware, async (req, res) => {
 
 app.get("/chats/:roomId", async (req, res) => {
     try {
-        const roomId = Number(req.params.roomId);
-        console.log(req.params.roomId);
+        const roomIdParam = req.params.roomId;
+        console.log("Fetching chats for roomId param:", roomIdParam);
+        
+        const numericId = Number(roomIdParam);
+        let room = null;
+        
+        // If roomIdParam is a valid number, try finding by ID
+        if (!isNaN(numericId) && numericId > 0) {
+            room = await prismaClient.room.findUnique({
+                where: {
+                    id: numericId
+                }
+            });
+            console.log("Room found by ID:", room);
+        }
+        
+        // If not found by ID, try finding by slug
+        if (!room) {
+            room = await prismaClient.room.findFirst({
+                where: {
+                    slug: roomIdParam
+                }
+            });
+            console.log("Room found by slug:", room);
+        }
+        
+        // If room doesn't exist, return empty messages (not 404)
+        if (!room) {
+            console.log("Room not found, returning empty messages");
+            return res.status(200).json({
+                messages: []
+            });
+        }
+        
         const messages = await prismaClient.chat.findMany({
             where: {
-                roomId: roomId
+                roomId: room.id
             },
             orderBy: {
                 id: "desc"
@@ -119,12 +161,13 @@ app.get("/chats/:roomId", async (req, res) => {
             take: 1000
         });
 
-        res.json({
+        console.log("Returning", messages.length, "messages for room", room.id);
+        res.status(200).json({
             messages
         })
     } catch(e) {
-        console.log(e);
-        res.json({
+        console.error("Error in /chats/:roomId:", e);
+        res.status(200).json({
             messages: []
         })
     }

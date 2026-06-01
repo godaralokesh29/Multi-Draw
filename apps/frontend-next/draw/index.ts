@@ -25,7 +25,8 @@ type Shapes={
 
 export async function initDraw(ctx:CanvasRenderingContext2D,canvas:HTMLCanvasElement,roomId:string,socket: WebSocket){
 
-    let existingShapes:Shapes[]= await getExistingShapes(roomId);
+    const roomIdStr = String(roomId); // Ensure roomId is always a string
+    let existingShapes:Shapes[]= await getExistingShapes(roomIdStr);
     let previewShapes = new Map<string, Shapes>();
     const clientId = Math.random().toString(36).substring(7);
 
@@ -109,13 +110,13 @@ export async function initDraw(ctx:CanvasRenderingContext2D,canvas:HTMLCanvasEle
         socket.send(JSON.stringify({
             type: "sync",
             message: JSON.stringify({ shape: null, clientId }),
-            roomId
+            roomId: roomIdStr
         }));
 
         socket.send(JSON.stringify({
             type:"chat",
             message:JSON.stringify({shape}),
-            roomId
+            roomId: roomIdStr
         }))
 
         
@@ -145,7 +146,7 @@ export async function initDraw(ctx:CanvasRenderingContext2D,canvas:HTMLCanvasEle
             socket.send(JSON.stringify({
                 type: "sync",
                 message: JSON.stringify({ shape: currentPreviewShape, clientId }),
-                roomId
+                roomId: roomIdStr
             }));
             
             clearCanvas(existingShapes, previewShapes, canvas, ctx);
@@ -188,11 +189,20 @@ function clearCanvas(existingShapes:Shapes[], previewShapes: Map<string, Shapes>
 
 
 async function getExistingShapes(roomId:string){
-    const res= await axios.get(`${HTTP_BACKEND}/chats/${roomId}`);
-    const messages=res.data.messages
-    const Shapes=messages.map((x:{message:string})=>{
-        const parsedShape=JSON.parse(x.message)
-        return parsedShape.shape
-    })
-    return Shapes;
+    try {
+        console.log("Fetching shapes for room:", roomId);
+        const res= await axios.get(`${HTTP_BACKEND}/chats/${roomId}`, {
+            timeout: 5000
+        });
+        const messages=res.data.messages || [];
+        console.log("Fetched messages:", messages);
+        const Shapes=messages.map((x:{message:string})=>{
+            const parsedShape=JSON.parse(x.message)
+            return parsedShape.shape
+        })
+        return Shapes;
+    } catch(e) {
+        console.error("Error fetching existing shapes for room", roomId, ":", e);
+        return [];
+    }
 }
