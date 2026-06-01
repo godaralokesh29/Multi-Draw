@@ -100,6 +100,20 @@ wss.on('connection', function connection(ws, request) {
       })
     }
 
+    if (parsedData.type === "sync") {
+      const roomId = parsedData.roomId;
+      const message = parsedData.message;
+      users.forEach(user => {
+        if (user.rooms.includes(roomId) && user.ws !== ws) {
+          user.ws.send(JSON.stringify({
+            type: "sync",
+            message: message,
+            roomId
+          }))
+        }
+      })
+    }
+
   });
 
 });

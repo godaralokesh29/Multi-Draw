@@ -12,34 +12,50 @@ type Shapes={
     height:number
 
 } | {
-    type:"circle"
+    type:"circle",
     centerX:number,
     centerY:number,
     radius:number
 
+} | {
+    type: "pencil",
+    points: {x: number, y: number}[]
 }
 
 
 export async function initDraw(ctx:CanvasRenderingContext2D,canvas:HTMLCanvasElement,roomId:string,socket: WebSocket){
 
     let existingShapes:Shapes[]= await getExistingShapes(roomId);
+    let previewShapes = new Map<string, Shapes>();
+    const clientId = Math.random().toString(36).substring(7);
+
     socket.onmessage=(event)=>{
 
         const message=JSON.parse(event.data);
         if(message.type=="chat"){
-            const parsedShape=message.message
-            existingShapes.push(parsedShape);
-            clearCanvas(existingShapes,canvas,ctx);
+            const parsedData=JSON.parse(message.message);
+            existingShapes.push(parsedData.shape);
+            clearCanvas(existingShapes, previewShapes, canvas, ctx);
+        } else if (message.type === "sync") {
+            const parsedData = JSON.parse(message.message);
+            if (parsedData.shape) {
+                previewShapes.set(parsedData.clientId, parsedData.shape);
+            } else {
+                previewShapes.delete(parsedData.clientId);
+            }
+            clearCanvas(existingShapes, previewShapes, canvas, ctx);
         }
 
     }
 
-    clearCanvas(existingShapes,canvas,ctx);
+    clearCanvas(existingShapes, previewShapes, canvas, ctx);
 
 
       let startX = 0;
       let startY = 0;
       let clicked = false;
+      let currentPencilPoints: {x: number, y: number}[] = [];
+
 
       
 
@@ -47,24 +63,59 @@ export async function initDraw(ctx:CanvasRenderingContext2D,canvas:HTMLCanvasEle
         clicked = true;
         startX = e.clientX;
         startY = e.clientY;
+        //@ts-ignore
+        if (window.selectedTool === "pencil") {
+            currentPencilPoints = [{x: startX, y: startY}];
+        }
       });
       canvas.addEventListener("mouseup",(e)=>{
         clicked=false;
         const width = e.clientX - startX;
         const height = e.clientY - startY;
-        const shape:Shapes={
+        //@ts-ignore
+          const selectedTool = window.selectedTool;
+          let shape:Shapes |null=null;
+
+        if(selectedTool==="rect"){
+             shape={
             type:"rect",
             x:startX,
             y:startY,
             width,
             height
         }
+
+        }else if(selectedTool==="circle"){
+            const radius=Math.max(width,height)/2
+             shape={
+                type:"circle",
+                radius:Math.max(width,height),
+                centerX:startX+radius,
+                centerY:startY+radius,
+            }
+        } else if(selectedTool==="pencil") {
+            shape = {
+                type: "pencil",
+                points: [...currentPencilPoints]
+            };
+        }
+        
+        if(!shape){
+            return;
+        }
+
         existingShapes.push(shape)
+
+        socket.send(JSON.stringify({
+            type: "sync",
+            message: JSON.stringify({ shape: null, clientId }),
+            roomId
+        }));
 
         socket.send(JSON.stringify({
             type:"chat",
             message:JSON.stringify({shape}),
-            
+            roomId
         }))
 
         
@@ -73,27 +124,66 @@ export async function initDraw(ctx:CanvasRenderingContext2D,canvas:HTMLCanvasEle
         if(clicked){
             const width = e.clientX - startX;
             const height = e.clientY - startY;
-            clearCanvas(existingShapes,canvas,ctx);
-            ctx.strokeStyle="rgba(255,255,255)"
-            ctx.strokeRect(startX,startY,width,height)
+            //@ts-ignore
+            const selectedTool = window.selectedTool;
+            let currentPreviewShape: Shapes | null = null;
+            
+            if (selectedTool === "pencil") {
+                currentPencilPoints.push({x: e.clientX, y: e.clientY});
+                currentPreviewShape = { type: "pencil", points: currentPencilPoints };
+            } else if (selectedTool === "rect") {
+                currentPreviewShape = { type: "rect", x: startX, y: startY, width, height };
+            } else if (selectedTool === "circle") {
+                const radius = Math.max(width, height) / 2;
+                currentPreviewShape = { type: "circle", centerX: startX + radius, centerY: startY + radius, radius: Math.abs(radius) };
+            }
+            
+            if (currentPreviewShape) {
+                previewShapes.set(clientId, currentPreviewShape);
+            }
+            
+            socket.send(JSON.stringify({
+                type: "sync",
+                message: JSON.stringify({ shape: currentPreviewShape, clientId }),
+                roomId
+            }));
+            
+            clearCanvas(existingShapes, previewShapes, canvas, ctx);
         }
 
       })
 }
 
 
-function clearCanvas(existingShapes:Shapes[],canvas:HTMLCanvasElement,ctx:CanvasRenderingContext2D){
+function clearCanvas(existingShapes:Shapes[], previewShapes: Map<string, Shapes>, canvas:HTMLCanvasElement,ctx:CanvasRenderingContext2D){
     ctx.clearRect(0,0,canvas.width,canvas.height)
     ctx.fillStyle="rgba(0,0,0)";
     ctx.fillRect(0,0,canvas.width,canvas.height);
 
-    existingShapes.map((shape)=>{
+    const drawShape = (shape: Shapes) => {
         if(shape.type=="rect"){
+            ctx.strokeStyle="rgba(255,255,255)";
             ctx.strokeRect(shape.x,shape.y,shape.width,shape.height);
+        }else if(shape.type==="circle"){
+            ctx.strokeStyle="rgba(255,255,255)";
+            ctx.beginPath();
+            ctx.arc(shape.centerX,shape.centerY,shape.radius,0,2*Math.PI);
+            ctx.stroke();
+            ctx.closePath();
+        }else if(shape.type==="pencil"){
+            ctx.strokeStyle="rgba(255,255,255)";
+            ctx.beginPath();
+            shape.points.forEach((p, i) => {
+                if (i === 0) ctx.moveTo(p.x, p.y);
+                else ctx.lineTo(p.x, p.y);
+            });
+            ctx.stroke();
+            ctx.closePath();
         }
-        
-    })
+    };
 
+    existingShapes.forEach(drawShape);
+    previewShapes.forEach(drawShape);
 }
 
 
