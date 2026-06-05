@@ -25,10 +25,16 @@ type Shapes={
 
 export async function initDraw(ctx:CanvasRenderingContext2D,canvas:HTMLCanvasElement,roomId:string,socket: WebSocket){
 
-    const roomIdStr = String(roomId); // Ensure roomId is always a string
+    const roomIdStr = String(roomId);
     let existingShapes:Shapes[]= await getExistingShapes(roomIdStr);
     let previewShapes = new Map<string, Shapes>();
     const clientId = Math.random().toString(36).substring(7);
+
+    const sendMessage = (message: any) => {
+        if (socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify(message));
+        }
+    };
 
     socket.onmessage=(event)=>{
 
@@ -107,17 +113,17 @@ export async function initDraw(ctx:CanvasRenderingContext2D,canvas:HTMLCanvasEle
 
         existingShapes.push(shape)
 
-        socket.send(JSON.stringify({
+        sendMessage({
             type: "sync",
             message: JSON.stringify({ shape: null, clientId }),
             roomId: roomIdStr
-        }));
+        });
 
-        socket.send(JSON.stringify({
+        sendMessage({
             type:"chat",
             message:JSON.stringify({shape}),
             roomId: roomIdStr
-        }))
+        })
 
         
       })
@@ -142,13 +148,13 @@ export async function initDraw(ctx:CanvasRenderingContext2D,canvas:HTMLCanvasEle
             if (currentPreviewShape) {
                 previewShapes.set(clientId, currentPreviewShape);
             }
-            
-            socket.send(JSON.stringify({
+
+            sendMessage({
                 type: "sync",
                 message: JSON.stringify({ shape: currentPreviewShape, clientId }),
                 roomId: roomIdStr
-            }));
-            
+            });
+
             clearCanvas(existingShapes, previewShapes, canvas, ctx);
         }
 

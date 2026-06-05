@@ -82,9 +82,20 @@ wss.on('connection', function connection(ws, request) {
       const message = parsedData.message;
 
       try {
+        const numericRoomId = Number(roomId);
+
+        const room = await prismaClient.room.findUnique({
+          where: { id: numericRoomId }
+        });
+
+        if (!room) {
+          console.log("Room not found:", numericRoomId);
+          return;
+        }
+
         await prismaClient.chat.create({
           data: {
-            roomId: Number(roomId),
+            roomId: numericRoomId,
             message,
             userId
           }

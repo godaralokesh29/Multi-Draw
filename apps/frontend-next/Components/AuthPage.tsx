@@ -66,8 +66,12 @@ export function AuthPage({ isSignin }: { isSignin: boolean }) {
                 );
 
                 if (isSignin) {
-                  await localStorage.setItem("token", res.data.token);
-                  router.push("/dashboard");
+                  if (res.data?.token) {
+                    localStorage.setItem("token", res.data.token);
+                    router.push("/dashboard");
+                  } else {
+                    setError("No token received from server");
+                  }
                 } else {
                   router.push("/signin");
                 }
