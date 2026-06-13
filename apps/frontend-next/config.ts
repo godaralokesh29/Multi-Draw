@@ -8,12 +8,12 @@ const isDevelopment = process.env.NODE_ENV === "development";
 
 // HTTP Backend API URL
 export const HTTP_BACKEND = isProduction
-  ? process.env.NEXT_PUBLIC_BACKEND_URL || "http://duodle.onthewifi.com"
+  ? process.env.NEXT_PUBLIC_BACKEND_URL || "http://duodle.onthewifi.com:3001"
   : process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
 
 // WebSocket URL
 export const WS_URL = isProduction
-  ? process.env.NEXT_PUBLIC_WS_URL || "ws://duodle.onthewifi.com"
+  ? process.env.NEXT_PUBLIC_WS_URL || "ws://duodle.onthewifi.com:8080"
   : process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:8080";
 
 // Debug logging
