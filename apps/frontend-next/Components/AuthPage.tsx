@@ -2,6 +2,7 @@
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { getApiUrl } from "@/lib/apiConfig";
 
 export function AuthPage({ isSignin }: { isSignin: boolean }) {
   const [username, setUsername] = useState("");
@@ -51,8 +52,8 @@ export function AuthPage({ isSignin }: { isSignin: boolean }) {
               try {
                 const res = await axios.post(
                   isSignin
-                    ? "http://localhost:3001/signin"
-                    : "http://localhost:3001/signup",
+                    ? getApiUrl("/signin")
+                    : getApiUrl("/signup"),
                   isSignin
                     ? {
                         username,

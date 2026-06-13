@@ -40,7 +40,7 @@ export const validateApiConnection = async (): Promise<boolean> => {
   try {
     const response = await fetch(`${HTTP_BACKEND}/health`, {
       method: 'GET',
-      timeout: 5000,
+    
     }).catch(() => null);
     
     return response?.ok ?? false;
