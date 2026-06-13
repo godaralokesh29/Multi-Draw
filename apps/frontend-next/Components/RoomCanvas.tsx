@@ -1,100 +1,60 @@
-"use client"
+"use client";
+
+import { WS_URL } from "@/config";
+import { getToken } from "@/lib/auth";
+import { useEffect, useState } from "react";
 import { Canvas } from "./Canvas";
-import { useEffect, useRef, useState } from "react";
-import { initDraw } from "../draw";
-import { WS_URL, HTTP_BACKEND } from "@/config";
-import { useRouter } from "next/navigation";
-import axios from "axios";
 
-export function RoomCanvas({roomId}:{roomId:string}){
-
-    const [socket,setSocket]=useState<WebSocket|null>(null);
-    const [error, setError]=useState<string|null>(null);
-    const router = useRouter();
+export function RoomCanvas({roomId}: {roomId: string}) {
+    const [socket, setSocket] = useState<WebSocket | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        let ws: WebSocket | null = null;
+        const token = getToken();
+        if (!token) {
+            setError("Not authenticated. Please sign in.");
+            return;
+        }
 
-        const initRoom = async () => {
-            const token = localStorage.getItem("token");
+        const ws = new WebSocket(`${WS_URL}?token=${token}`)
 
-            if (!token || token === "undefined") {
-                setError("No authentication token found. Please sign in.");
-                router.push("/signin");
-                return;
-            }
+        ws.onopen = () => {
+            setSocket(ws);
+            setError(null);
+            const data = JSON.stringify({
+                type: "join_room",
+                roomId
+            });
+            console.log(data);
+            ws.send(data)
+        }
 
-            try {
-                const roomRes = await axios.get(`${HTTP_BACKEND}/room/${roomId}`);
-                let room = roomRes.data.room;
-
-                if (!room) {
-                    console.log("Room not found, creating new room with id:", roomId);
-                    const createRes = await axios.post(
-                        `${HTTP_BACKEND}/room`,
-                        { name: roomId },
-                        { headers: { Authorization: token } }
-                    );
-                    room = createRes.data;
-                }
-
-                ws = new WebSocket(
-                    `${WS_URL}?token=${token}`
-                );
-
-                ws.onopen = () => {
-                    console.log("WebSocket connected");
-                    setSocket(ws);
-
-                    ws?.send(
-                        JSON.stringify({
-                            type: "join_room",
-                            roomId: String(roomId),
-                        })
-                    );
-                };
-
-                ws.onerror = (event) => {
-                    console.error("WebSocket error:", event);
-                    setError("Failed to connect to server. Please try again.");
-                };
-
-                ws.onclose = () => {
-                    console.log("WebSocket closed");
-                };
-            } catch (err: any) {
-                console.error("Error initializing room:", err);
-                setError("Failed to initialize room");
-            }
-        };
-
-        initRoom();
+        ws.onerror = () => {
+            setError("Failed to connect to room");
+        }
 
         return () => {
-            if (ws && ws.readyState === WebSocket.OPEN) {
+            if (ws.readyState === WebSocket.OPEN) {
                 ws.close();
             }
-        };
-    }, [roomId, router]);
-
-
-    if(error){
-        return <div style={{display:"flex", justifyContent:"center", alignItems:"center", height:"100vh"}}>
-            <div style={{textAlign:"center"}}>
-                <p style={{color:"red", fontSize:"18px"}}>{error}</p>
+        }
+    }, [roomId])
+   
+    if (error) {
+        return <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+            <div className="bg-red-500/10 border border-red-500 text-red-500 p-4 rounded">
+                {error}
             </div>
         </div>
     }
 
-    if(!socket){
-        return <div style={{display:"flex", justifyContent:"center", alignItems:"center", height:"100vh"}}>
-            <p>Connecting to server...</p>
+    if (!socket) {
+        return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white">
+            Connecting to server....
         </div>
     }
 
-  return (
-    <div>
-      <Canvas roomId={roomId} socket={socket}/>
+    return <div>
+        <Canvas roomId={roomId} socket={socket} />
     </div>
-  );
 }

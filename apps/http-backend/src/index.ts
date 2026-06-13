@@ -118,7 +118,7 @@ app.post("/room", middleware, async (req, res) => {
 app.get("/chats/:roomId", async (req, res) => {
     try {
         const roomIdParam = req.params.roomId;
-        console.log("Fetching chats for roomId param:", roomIdParam);
+        console.log("🔍 Fetching chats for roomId param:", roomIdParam);
         
         const numericId = Number(roomIdParam);
         let room = null;
@@ -130,7 +130,7 @@ app.get("/chats/:roomId", async (req, res) => {
                     id: numericId
                 }
             });
-            console.log("Room found by ID:", room);
+            console.log(`  └─ Tried numeric ID ${numericId}:`, room ? "✅ FOUND" : "❌ NOT FOUND");
         }
         
         // If not found by ID, try finding by slug
@@ -140,33 +140,44 @@ app.get("/chats/:roomId", async (req, res) => {
                     slug: roomIdParam
                 }
             });
-            console.log("Room found by slug:", room);
+            console.log(`  └─ Tried slug "${roomIdParam}":`, room ? "✅ FOUND" : "❌ NOT FOUND");
         }
         
         // If room doesn't exist, return empty messages (not 404)
         if (!room) {
-            console.log("Room not found, returning empty messages");
+            console.log(`⚠️ Room ${roomIdParam} not found, returning empty messages`);
             return res.status(200).json({
                 messages: []
             });
         }
         
+        console.log(`✅ Room found: ID=${room.id}, slug=${room.slug}`);
+        
         const messages = await prismaClient.chat.findMany({
             where: {
                 roomId: room.id
             },
+            select: {
+                id: true,
+                message: true,
+                roomId: true,
+                userId: true
+            },
             orderBy: {
                 id: "desc"
             },
-            take: 1000
+            take: 500
         });
 
-        console.log("Returning", messages.length, "messages for room", room.id);
+        console.log(`✅ Returning ${messages.length} messages for room ${room.id}`);
+        if (messages.length > 0) {
+            console.log(`   Sample message:`, messages[0]);
+        }
         res.status(200).json({
             messages
         })
     } catch(e) {
-        console.error("Error in /chats/:roomId:", e);
+        console.error("❌ Error in /chats/:roomId:", e);
         res.status(200).json({
             messages: []
         })

@@ -63,7 +63,11 @@ wss.on('connection', function connection(ws, request) {
 
     if (parsedData.type === "join_room") {
       const user = users.find(x => x.ws === ws);
-      user?.rooms.push(parsedData.roomId);
+      if (user) {
+        user.rooms.push(parsedData.roomId);
+        console.log(`👤 User ${user.userId} joined room ${parsedData.roomId}`);
+        console.log(`📊 Total users in room ${parsedData.roomId}:`, users.filter(u => u.rooms.includes(parsedData.roomId)).length);
+      }
     }
 
     if (parsedData.type === "leave_room") {
@@ -72,41 +76,56 @@ wss.on('connection', function connection(ws, request) {
         return;
       }
       user.rooms = user?.rooms.filter(x => x !== parsedData.roomId);
+      console.log(`👤 User ${user.userId} left room ${parsedData.roomId}`);
     }
 
-    console.log("message received")
-    console.log(parsedData);
+    console.log("📨 Message received:", parsedData.type, "for room:", parsedData.roomId);
 
     if (parsedData.type === "chat") {
       const roomId = parsedData.roomId;
       const message = parsedData.message;
 
+      console.log(`💬 Broadcasting chat to room ${roomId}`);
+      const usersInRoom = users.filter(user => user.rooms.includes(roomId.toString()));
+      console.log(`📤 Sending to ${usersInRoom.length} users in room ${roomId}`);
+
+      // Try to save to database but don't let it block the broadcast
       try {
         const numericRoomId = Number(roomId);
 
-        const room = await prismaClient.room.findUnique({
+        let room = await prismaClient.room.findUnique({
           where: { id: numericRoomId }
         });
 
+        // If not found by ID, try by slug
         if (!room) {
-          console.log("Room not found:", numericRoomId);
-          return;
+          room = await prismaClient.room.findFirst({
+            where: { slug: roomId.toString() }
+          });
         }
 
-        await prismaClient.chat.create({
-          data: {
-            roomId: numericRoomId,
-            message,
-            userId
-          }
-        });
+        if (room) {
+          await prismaClient.chat.create({
+            data: {
+              roomId: room.id,
+              message,
+              userId
+            }
+          });
+          console.log(`✅ Chat saved to database for room ${roomId}`);
+        } else {
+          console.log(`⚠️ Room not found for room ID: ${roomId} (but still broadcasting)`);
+        }
       } catch(e) {
-        console.error("Error saving chat:", e);
+        console.error("Error saving chat to database:", e);
+        // Don't stop the broadcast even if database save fails
       }
 
-      // Broadcast to all users in the room
+      // ALWAYS broadcast regardless of database save
+      console.log(`📨 Broadcasting message to users in room ${roomId}`);
       users.forEach(user => {
         if (user.rooms.includes(roomId.toString())) {
+          console.log(`   ✅ Sending to user ${user.userId}`);
           user.ws.send(JSON.stringify({
             type: "chat",
             message: message,
@@ -119,6 +138,11 @@ wss.on('connection', function connection(ws, request) {
     if (parsedData.type === "sync") {
       const roomId = parsedData.roomId;
       const message = parsedData.message;
+      
+      console.log(`👁️ Broadcasting sync (preview) to room ${roomId}`);
+      const usersInRoom = users.filter(user => user.rooms.includes(roomId.toString()) && user.ws !== ws);
+      console.log(`📤 Sending preview to ${usersInRoom.length} other users in room ${roomId}`);
+      
       users.forEach(user => {
         if (user.rooms.includes(roomId.toString()) && user.ws !== ws) {
           user.ws.send(JSON.stringify({
