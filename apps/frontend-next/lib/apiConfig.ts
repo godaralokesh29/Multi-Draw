@@ -9,7 +9,7 @@
  * - Or set NEXT_PUBLIC_BACKEND_URL and NEXT_PUBLIC_WS_URL environment variables
  */
 
-import { HTTP_BACKEND, WS_URL } from './config';
+import { HTTP_BACKEND, WS_URL } from '../config';
 
 export interface ApiConfig {
   httpBackend: string;
