@@ -177,7 +177,7 @@ const router = useRouter();
             <div className="mt-12 flex justify-center items-center space-x-8 text-sm text-gray-500">
               <div className="flex items-center space-x-2">
                 <Lock className="w-4 h-4" />
-                <span>No account required</span>
+                <span>No account required HELLO I was Checking for CI/CD pipeline</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Heart className="w-4 h-4" />
