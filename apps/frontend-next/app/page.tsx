@@ -91,16 +91,31 @@ const router = useRouter();
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen w-full bg-white relative text-gray-800 overflow-x-hidden">
+      {/* Woven Fabric - Light Pattern */}
+      <div
+        className="fixed inset-0 z-0 pointer-events-none"
+        style={{
+          backgroundImage: `
+            repeating-linear-gradient(0deg, rgba(75, 85, 99, 0.08), rgba(75, 85, 99, 0.08) 2px, transparent 2px, transparent 6px),
+            repeating-linear-gradient(90deg, rgba(107, 114, 128, 0.06), rgba(107, 114, 128, 0.06) 2px, transparent 2px, transparent 6px),
+            repeating-linear-gradient(0deg, rgba(55, 65, 81, 0.04), rgba(55, 65, 81, 0.04) 1px, transparent 1px, transparent 12px),
+            repeating-linear-gradient(90deg, rgba(55, 65, 81, 0.04), rgba(55, 65, 81, 0.04) 1px, transparent 1px, transparent 12px)
+          `,
+        }}
+      />
+      
+      {/* Content wrapper */}
+      <div className="relative z-10 w-full">
       {/* Navigation */}
       <nav className="bg-white border-b border-gray-100 sticky top-0 z-50 backdrop-blur-sm bg-white/90">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                 <Pen className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900">Excalidraw</span>
+              <span className="text-lg sm:text-xl font-bold text-gray-900">Excalidraw</span>
             </div>
             
             <div className="hidden md:flex items-center space-x-8">
@@ -129,12 +144,12 @@ const router = useRouter();
         {/* Mobile menu */}
         {mobileMenuOpen && (
           <div className="md:hidden bg-white border-t border-gray-100">
-            <div className="px-4 py-2 space-y-2">
-              <a href="#features" className="block py-2 text-gray-600">Features</a>
-              <a href="#about" className="block py-2 text-gray-600">About</a>
-              <a href="#" className="block py-2 text-gray-600">Documentation</a>
-              <a href="https://github.com/godaralokesh29" className="block py-2 text-gray-600">GitHub</a>
-              <button className="w-full bg-blue-600 text-white py-2 rounded-lg mt-2"  onClick={HandleClick}>
+            <div className="px-3 sm:px-4 py-2 space-y-2">
+              <a href="#features" className="block py-2 text-gray-600 text-sm">Features</a>
+              <a href="#about" className="block py-2 text-gray-600 text-sm">About</a>
+              <a href="#" className="block py-2 text-gray-600 text-sm">Documentation</a>
+              <a href="https://github.com/godaralokesh29" className="block py-2 text-gray-600 text-sm">GitHub</a>
+              <button className="w-full bg-blue-600 text-white py-2 rounded-lg mt-2 text-sm font-medium"  onClick={HandleClick}>
                 Start Drawing
               </button>
             </div>
@@ -144,40 +159,40 @@ const router = useRouter();
 
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-purple-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-12 sm:py-20 lg:py-28">
           <div className="text-center">
-            <div className="flex justify-center mb-6">
-              <div className="flex items-center space-x-2 bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">
-                <Sparkles className="w-4 h-4" />
+            <div className="flex justify-center mb-4 sm:mb-6">
+              <div className="flex items-center space-x-2 bg-blue-100 text-blue-800 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium">
+                <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
                 <span>Free & Open Source</span>
               </div>
             </div>
             
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
               Collaborative
               <span className="text-blue-600 block">Whiteboarding</span>
               Made Simple
             </h1>
             
-            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-2">
               Create beautiful hand-drawn style diagrams and collaborate with your team in real-time. 
               Privacy-focused, lightning-fast, and works everywhere.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <button onClick={HandleClick} className="bg-blue-600 text-white px-8 py-4 rounded-xl hover:bg-blue-700 transition-all transform hover:scale-105 font-semibold text-lg flex items-center space-x-2 shadow-lg">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-2">
+              <button onClick={HandleClick} className="w-full sm:w-auto bg-blue-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl hover:bg-blue-700 transition-all transform hover:scale-105 font-semibold text-base sm:text-lg flex items-center justify-center space-x-2 shadow-lg">
                 <span>SignUp</span>
                 <ArrowRight className="w-5 h-5" />
               </button>
-              <button onClick={HandleClick} className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-xl hover:border-gray-400 transition-colors font-semibold text-lg">
+              <button onClick={HandleClick} className="w-full sm:w-auto border-2 border-gray-300 text-gray-700 px-6 sm:px-8 py-3 sm:py-4 rounded-xl hover:border-gray-400 transition-colors font-semibold text-base sm:text-lg">
                 SignIn
               </button>
             </div>
             
-            <div className="mt-12 flex justify-center items-center space-x-8 text-sm text-gray-500">
+            <div className="mt-8 sm:mt-12 flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 text-xs sm:text-sm text-gray-500 px-2">
               <div className="flex items-center space-x-2">
                 <Lock className="w-4 h-4" />
-                <span>No account required HELLO I was Checking for CI/CD pipeline</span>
+                <span>No account required</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Heart className="w-4 h-4" />
@@ -198,25 +213,25 @@ const router = useRouter();
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+      <section id="features" className="py-12 sm:py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
               Everything you need to bring ideas to life
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto px-2">
               Packed with powerful features while staying simple and intuitive
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {features.map((feature, index) => (
-              <div key={index} className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+              <div key={index} className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-100">
                 <div className="bg-blue-100 w-12 h-12 rounded-xl flex items-center justify-center text-blue-600 mb-4">
                   {feature.icon}
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
+                <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -224,25 +239,25 @@ const router = useRouter();
       </section>
 
       {/* Use Cases Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+      <section className="py-12 sm:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
               Perfect for every use case
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 px-2">
               From quick sketches to complex diagrams
             </p>
           </div>
           
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {useCases.map((useCase, index) => (
-              <div key={index} className="text-center p-6 rounded-xl hover:bg-gray-50 transition-colors">
+              <div key={index} className="text-center p-4 sm:p-6 rounded-xl hover:bg-gray-50 transition-colors">
                 <div className="bg-gradient-to-br from-blue-500 to-purple-600 w-12 h-12 rounded-xl flex items-center justify-center text-white mb-4 mx-auto">
                   {useCase.icon}
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{useCase.title}</h3>
-                <p className="text-gray-600 text-sm">{useCase.description}</p>
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">{useCase.title}</h3>
+                <p className="text-sm text-gray-600">{useCase.description}</p>
               </div>
             ))}
           </div>
@@ -250,19 +265,19 @@ const router = useRouter();
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+      <section className="py-12 sm:py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+        <div className="max-w-4xl mx-auto text-center px-3 sm:px-6 lg:px-8">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6">
             Ready to start creating?
           </h2>
-          <p className="text-xl text-blue-100 mb-8">
+          <p className="text-base sm:text-lg md:text-xl text-blue-100 mb-6 sm:mb-8">
             Join thousands of teams who trust Excalidraw for their visual collaboration needs.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button onClick={HandleClick} className="bg-white text-blue-600 px-8 py-4 rounded-xl hover:bg-gray-50 transition-colors font-semibold text-lg">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-2">
+            <button onClick={HandleClick} className="w-full sm:w-auto bg-white text-blue-600 px-6 sm:px-8 py-3 sm:py-4 rounded-xl hover:bg-gray-50 transition-colors font-semibold text-base sm:text-lg">
               Start Drawing Now
             </button>
-            <button onClick={GitHubclick} className="border-2 border-white text-white px-8 py-4 rounded-xl hover:bg-white hover:text-blue-600 transition-colors font-semibold text-lg">
+            <button onClick={GitHubclick} className="w-full sm:w-auto border-2 border-white text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl hover:bg-white hover:text-blue-600 transition-colors font-semibold text-base sm:text-lg">
               View on GitHub
             </button>
           </div>
@@ -270,17 +285,17 @@ const router = useRouter();
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="col-span-2">
+      <footer className="bg-gray-900 text-white py-12 sm:py-16">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
+            <div className="col-span-1 sm:col-span-2">
               <div className="flex items-center space-x-2 mb-4">
                 <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                   <Pen className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-xl font-bold">Excalidraw</span>
               </div>
-              <p className="text-gray-400 max-w-md">
+              <p className="text-gray-400 max-w-md text-sm sm:text-base">
                 The open-source collaborative whiteboarding tool that makes visual collaboration simple and enjoyable.
               </p>
               <div className="flex space-x-4 mt-6">
@@ -294,31 +309,32 @@ const router = useRouter();
             </div>
             
             <div>
-              <h3 className="font-semibold mb-4">Product</h3>
+              <h3 className="font-semibold mb-4 text-sm sm:text-base">Product</h3>
               <div className="space-y-2">
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors">Features</a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors">Documentation</a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors">Examples</a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors">Changelog</a>
+                <a href="#" className="block text-gray-400 hover:text-white transition-colors text-sm">Features</a>
+                <a href="#" className="block text-gray-400 hover:text-white transition-colors text-sm">Documentation</a>
+                <a href="#" className="block text-gray-400 hover:text-white transition-colors text-sm">Examples</a>
+                <a href="#" className="block text-gray-400 hover:text-white transition-colors text-sm">Changelog</a>
               </div>
             </div>
             
             <div>
-              <h3 className="font-semibold mb-4">Community</h3>
+              <h3 className="font-semibold mb-4 text-sm sm:text-base">Community</h3>
               <div className="space-y-2">
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors"><button onClick={GitHubclick}>Github</button></a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors">Discord</a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors">Twitter</a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors">Blog</a>
+                <a href="#" className="block text-gray-400 hover:text-white transition-colors text-sm"><button onClick={GitHubclick} className="text-left">Github</button></a>
+                <a href="#" className="block text-gray-400 hover:text-white transition-colors text-sm">Discord</a>
+                <a href="#" className="block text-gray-400 hover:text-white transition-colors text-sm">Twitter</a>
+                <a href="#" className="block text-gray-400 hover:text-white transition-colors text-sm">Blog</a>
               </div>
             </div>
           </div>
           
-          <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
+          <div className="border-t border-gray-800 mt-8 sm:mt-12 pt-6 sm:pt-8 text-center text-gray-400 text-sm">
             <p>&copy; Doraw  Made with ❤️ by Lokesh Godara.</p>
           </div>
         </div>
       </footer>
+      </div>
     </div>
   );
 }
