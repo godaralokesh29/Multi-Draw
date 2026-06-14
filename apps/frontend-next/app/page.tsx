@@ -30,8 +30,7 @@ const router = useRouter();
   };
 
   const GitHubclick=()=>{
-    router.push('https://github.com/godaralokesh29')
-
+    window.open('https://github.com/godaralokesh29', '_blank')
   }
 
   const features = [
@@ -124,10 +123,10 @@ const router = useRouter();
               <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">Features</a>
               <a href="#about" className="text-gray-600 hover:text-gray-900 transition-colors">About</a>
               <a href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Documentation</a>
-              <a href="#" className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 transition-colors">
+              <button onClick={GitHubclick} className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 transition-colors bg-none border-none cursor-pointer">
                 <Github className="w-4 h-4" />
                 <span>GitHub</span>
-              </a>
+              </button>
               <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
               onClick={HandleClick}>
                 Start Drawing
@@ -150,7 +149,7 @@ const router = useRouter();
               <a href="#features" className="block py-2 text-gray-600 text-sm">Features</a>
               <a href="#about" className="block py-2 text-gray-600 text-sm">About</a>
               <a href="#" className="block py-2 text-gray-600 text-sm">Documentation</a>
-              <a href="https://github.com/godaralokesh29" className="block py-2 text-gray-600 text-sm">GitHub</a>
+              <button onClick={GitHubclick} className="block py-2 text-gray-600 text-sm w-full text-left bg-none border-none cursor-pointer">GitHub</button>
               <button className="w-full bg-blue-600 text-white py-2 rounded-lg mt-2 text-sm font-medium"  onClick={HandleClick}>
                 Start Drawing
               </button>
@@ -289,7 +288,7 @@ const router = useRouter();
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6 sm:gap-8">
             <div className="col-span-1 sm:col-span-2">
               <div className="flex items-center space-x-2 mb-4">
                 <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -301,32 +300,20 @@ const router = useRouter();
                 The open-source collaborative whiteboarding tool that makes visual collaboration simple and enjoyable.
               </p>
               <div className="flex space-x-4 mt-6">
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <button onClick={GitHubclick} className="text-gray-400 hover:text-white transition-colors bg-none border-none cursor-pointer">
                   <Github className="w-5 h-5" />
-                </a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                </button>
+                <a href="https://x.com/godaralokesh_29" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
                   <Twitter className="w-5 h-5" />
                 </a>
               </div>
             </div>
             
             <div>
-              <h3 className="font-semibold mb-4 text-sm sm:text-base">Product</h3>
-              <div className="space-y-2">
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors text-sm">Features</a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors text-sm">Documentation</a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors text-sm">Examples</a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors text-sm">Changelog</a>
-              </div>
-            </div>
-            
-            <div>
               <h3 className="font-semibold mb-4 text-sm sm:text-base">Community</h3>
               <div className="space-y-2">
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors text-sm"><button onClick={GitHubclick} className="text-left">Github</button></a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors text-sm">Discord</a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors text-sm">Twitter</a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors text-sm">Blog</a>
+                <button onClick={GitHubclick} className="block text-gray-400 hover:text-white transition-colors text-sm bg-none border-none cursor-pointer text-left">GitHub</button>
+                <a href="https://x.com/godaralokesh_29" target="_blank" rel="noopener noreferrer" className="block text-gray-400 hover:text-white transition-colors text-sm">Twitter / X</a>
               </div>
             </div>
           </div>
