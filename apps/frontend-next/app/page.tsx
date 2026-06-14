@@ -91,17 +91,19 @@ const router = useRouter();
   ];
 
   return (
-    <div className="min-h-screen w-full bg-white relative text-gray-800 overflow-x-hidden">
-      {/* Woven Fabric - Light Pattern */}
+    <div className="w-full bg-[#f8fafc] relative text-gray-800">
+      {/* Circuit Board Background */}
       <div
         className="fixed inset-0 z-0 pointer-events-none"
         style={{
+          background: "#f8fafc",
           backgroundImage: `
-            repeating-linear-gradient(0deg, rgba(75, 85, 99, 0.08), rgba(75, 85, 99, 0.08) 2px, transparent 2px, transparent 6px),
-            repeating-linear-gradient(90deg, rgba(107, 114, 128, 0.06), rgba(107, 114, 128, 0.06) 2px, transparent 2px, transparent 6px),
-            repeating-linear-gradient(0deg, rgba(55, 65, 81, 0.04), rgba(55, 65, 81, 0.04) 1px, transparent 1px, transparent 12px),
-            repeating-linear-gradient(90deg, rgba(55, 65, 81, 0.04), rgba(55, 65, 81, 0.04) 1px, transparent 1px, transparent 12px)
+            linear-gradient(90deg, #e2e8f0 1px, transparent 1px),
+            linear-gradient(180deg, #e2e8f0 1px, transparent 1px),
+            linear-gradient(90deg, #cbd5e1 1px, transparent 1px),
+            linear-gradient(180deg, #cbd5e1 1px, transparent 1px)
           `,
+          backgroundSize: "50px 50px, 50px 50px, 10px 10px, 10px 10px",
         }}
       />
       
@@ -115,7 +117,7 @@ const router = useRouter();
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                 <Pen className="w-5 h-5 text-white" />
               </div>
-              <span className="text-lg sm:text-xl font-bold text-gray-900">Excalidraw</span>
+              <span className="text-lg sm:text-xl font-bold text-gray-900">Duodle</span>
             </div>
             
             <div className="hidden md:flex items-center space-x-8">
@@ -271,7 +273,7 @@ const router = useRouter();
             Ready to start creating?
           </h2>
           <p className="text-base sm:text-lg md:text-xl text-blue-100 mb-6 sm:mb-8">
-            Join thousands of teams who trust Excalidraw for their visual collaboration needs.
+            Join thousands of teams who trust Duodle for their visual collaboration needs.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-2">
             <button onClick={HandleClick} className="w-full sm:w-auto bg-white text-blue-600 px-6 sm:px-8 py-3 sm:py-4 rounded-xl hover:bg-gray-50 transition-colors font-semibold text-base sm:text-lg">
@@ -293,7 +295,7 @@ const router = useRouter();
                 <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                   <Pen className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-xl font-bold">Excalidraw</span>
+                <span className="text-xl font-bold">Duodle</span>
               </div>
               <p className="text-gray-400 max-w-md text-sm sm:text-base">
                 The open-source collaborative whiteboarding tool that makes visual collaboration simple and enjoyable.
