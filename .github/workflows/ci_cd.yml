@@ -1,38 +1,37 @@
 name: Deploy to AWS
 
 on:
-push:
-branches:
-- main
+  push:
+    branches:
+      - main
 
 jobs:
-deploy:
-runs-on: ubuntu-latest
+  deploy:
+    runs-on: ubuntu-latest
 
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 52.62.121.214
+          username: ubuntu
+          key: ${{ secrets.SSH_KEY }}
 
-steps:
-  - name: Deploy to EC2
-    uses: appleboy/ssh-action@v1.0.3
-    with:
-      host: 52.62.121.214
-      username: ubuntu
-      key: ${{ secrets.SSH_KEY }}
-      script: |
-        export NVM_DIR="$HOME/.nvm"
-        [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+          script: |
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 
-        cd ~/Duodle
+            cd ~/Duodle
 
-        git fetch origin
-        git reset --hard origin/main
+            git fetch origin
+            git reset --hard origin/main
 
-        which node || true
-        which pnpm || true
-        which pm2 || true
+            which node
+            which pnpm
+            which pm2
 
-        pnpm install
-        pnpm build
+            pnpm install
+            pnpm build
 
-        pm2 restart all --update-env
-        pm2 save
-
+            pm2 restart all --update-env
+            pm2 save
